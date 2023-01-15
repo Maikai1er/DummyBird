@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Dummy Bird</title>
+    <style>
+        * { padding: 0; margin: 0; }
+        canvas { background: rgba(63, 180, 63, 0.7); display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="360" height="480"></canvas>
+
+<script>
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+  const birdX = canvas.width / 10;
+  let birdY = canvas.height / 2;
+  let birdDY = 1;
+  let boostCounter = 0;
+  const birdRadius = 25;
+  let spacePressed = false;
+  let randomY = 0;
+  // variables for obstacles;
+  const o1 = { x1: canvas.width / 2, y1: 0, x2: 50, y2: 180 };
+  const o2 = { x1: canvas.width, y1: 0, x2: 50, y2: 180 };
+  const o3 = { x1: canvas.width / 2, y1: canvas.height - 180, x2: 50, y2: 180 };
+  const o4 = { x1: canvas.width, y1: canvas.height - 180, x2: 50, y2: 180 };
+
+  const getRandomInt = () => {
+    randomY = Math.floor(Math.random() * (100 - 200) + 50);
+  };
+
+  const gameOver = () => {
+    alert('Game Over!');
+    document.location.reload();
+    clearInterval(interval);
+  };
+
+  const drawLeftObstacle = () => {
+    ctx.beginPath();
+    ctx.rect(o1.x1, o1.y1, o1.x2, o1.y2);
+    ctx.rect(o3.x1, o3.y1, o3.x2, o3.y2);
+    ctx.fillStyle = '#0095DD';
+    ctx.fill();
+    ctx.closePath();
+  };
+
+  const drawRightObstacle = () => {
+    ctx.beginPath();
+    ctx.rect(o2.x1, o2.y1, o2.x2, o2.y2);
+    ctx.rect(o4.x1, o4.y1, o4.x2, o4.y2);
+    ctx.fillStyle = '#0095DD';
+    ctx.fill();
+    ctx.closePath();
+  };
+
+  const drawBird = () => {
+    ctx.beginPath();
+    ctx.arc(birdX, birdY, birdRadius, 0, Math.PI*2);
+    ctx.fillStyle = '#0095DD';
+    ctx.fill();
+    ctx.closePath();
+  };
+
+  const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawLeftObstacle();
+    drawRightObstacle();
+    // drawBird();
+    o1.x1 -= 1;
+    o2.x1 -= 1;
+    o3.x1 -= 1;
+    o4.x1 -= 1;
+    birdY += birdDY;
+    boostCounter += 1;
+    if (boostCounter === 5) {
+      birdDY += 1;
+      boostCounter = 0;
+    }
+    // if (birdY > canvas.height - birdRadius) gameOver();
+    if ((o1.x1 + o1.x2) < 0) {
+      o1.x1 = canvas.width;
+      o3.x1 = canvas.width;
+      getRandomInt();
+    }
+    if ((o2.x1 + o2.x2) < 0) {
+      o2.x1 = canvas.width;
+      o4.x1 = canvas.width;
+      getRandomInt();
+    }
+    if (spacePressed) {
+      birdDY = -5;
+    }
+  };
+
+  const keyDownHandler = (e) => {
+    if (e.keyCode == 32) spacePressed = true;
+  }
+
+  const keyUpHandler = (e) => {
+    if (e.keyCode == 32) spacePressed = false;
+  };
+
+  document.addEventListener("keydown", keyDownHandler, false);
+  document.addEventListener("keyup", keyUpHandler, false);
+
+  const interval = setInterval(draw, 5);
+</script>
+
+</body>
+</html>
