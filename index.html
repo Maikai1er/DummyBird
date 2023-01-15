@@ -15,25 +15,28 @@
 <script>
   const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
-  const birdX = canvas.width / 10;
+  const birdX = canvas.width / 8;
   let birdY = canvas.height / 2;
   let birdDY = 1;
-  let boostCounter = 0;
   const birdRadius = 25;
   let spacePressed = false;
   let randomY = 0;
+  const signs = ['+', '-'];
+  let randomYSign;
   // variables for obstacles;
   const o1 = { x1: canvas.width / 2, y1: 0, x2: 50, y2: 180 };
   const o2 = { x1: canvas.width, y1: 0, x2: 50, y2: 180 };
-  const o3 = { x1: canvas.width / 2, y1: canvas.height - 180, x2: 50, y2: 180 };
-  const o4 = { x1: canvas.width, y1: canvas.height - 180, x2: 50, y2: 180 };
+  const o3 = { x1: canvas.width / 2, y1: canvas.height - 180, x2: 50, y2: canvas.height };
+  const o4 = { x1: canvas.width, y1: canvas.height - 180, x2: 50, y2: canvas.height };
 
   const getRandomInt = () => {
-    randomY = Math.floor(Math.random() * (100 - 200) + 50);
+    randomY = Math.floor((Math.random()) * 100);
+    const rand = Math.floor(Math.random() * signs.length);
+    randomYSign = signs[rand];
   };
 
   const gameOver = () => {
-    alert('Game Over!');
+    // alert('Game Over!');
     document.location.reload();
     clearInterval(interval);
   };
@@ -59,7 +62,7 @@
   const drawBird = () => {
     ctx.beginPath();
     ctx.arc(birdX, birdY, birdRadius, 0, Math.PI*2);
-    ctx.fillStyle = '#0095DD';
+    ctx.fillStyle = '#f1b227';
     ctx.fill();
     ctx.closePath();
   };
@@ -68,45 +71,51 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawLeftObstacle();
     drawRightObstacle();
-    // drawBird();
+    drawBird();
     o1.x1 -= 1;
     o2.x1 -= 1;
     o3.x1 -= 1;
     o4.x1 -= 1;
-    birdY += birdDY;
-    boostCounter += 1;
-    if (boostCounter === 5) {
-      birdDY += 1;
-      boostCounter = 0;
-    }
-    // if (birdY > canvas.height - birdRadius) gameOver();
+    birdY -= birdDY;
+    birdDY -= 1;
     if ((o1.x1 + o1.x2) < 0) {
       o1.x1 = canvas.width;
       o3.x1 = canvas.width;
       getRandomInt();
+      o1.y2 = 180 + randomY;
+      o3.y1 = canvas.height - 180 + randomY;
     }
     if ((o2.x1 + o2.x2) < 0) {
       o2.x1 = canvas.width;
       o4.x1 = canvas.width;
       getRandomInt();
+      o2.y2 = 180 + randomY;
+
+      o4.y1 = canvas.height - 180 + randomY;
     }
     if (spacePressed) {
-      birdDY = -5;
+      birdDY = +5;
     }
+    if (birdY > canvas.height - birdRadius) gameOver();
+    // obstacles collision
+    if (birdY < o1.y2 + birdRadius && birdX + birdRadius > o1.x1  && birdX < 75) gameOver();
+    // if (birdY + birdRadius < o2.y2 && birdX + birdRadius > o2.x1 && birdX + birdRadius < o2.x2) gameOver();
+    // if (birdY + birdRadius > o3.y1 && birdX + birdRadius > o3.x1 && birdX + birdRadius < o3.x2) gameOver();
+    // if (birdY + birdRadius > o4.y1 && birdX + birdRadius > o4.x1 && birdX + birdRadius < o4.x2) gameOver();
   };
 
   const keyDownHandler = (e) => {
-    if (e.keyCode == 32) spacePressed = true;
+    if (e.keyCode === 32) spacePressed = true;
   }
 
   const keyUpHandler = (e) => {
-    if (e.keyCode == 32) spacePressed = false;
+    if (e.keyCode === 32) spacePressed = false;
   };
 
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
 
-  const interval = setInterval(draw, 5);
+  const interval = setInterval(draw, 70);
 </script>
 
 </body>
