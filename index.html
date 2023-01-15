@@ -98,10 +98,10 @@
     }
     if (birdY > canvas.height - birdRadius) gameOver();
     // obstacles collision
-    if (birdY < o1.y2 + birdRadius && birdX + birdRadius > o1.x1  && birdX < 75) gameOver();
-    // if (birdY + birdRadius < o2.y2 && birdX + birdRadius > o2.x1 && birdX + birdRadius < o2.x2) gameOver();
-    // if (birdY + birdRadius > o3.y1 && birdX + birdRadius > o3.x1 && birdX + birdRadius < o3.x2) gameOver();
-    // if (birdY + birdRadius > o4.y1 && birdX + birdRadius > o4.x1 && birdX + birdRadius < o4.x2) gameOver();
+    if (birdY < o1.y2 + birdRadius && birdX + birdRadius > o1.x1 && o1.x1 > -20) gameOver();
+    if (birdY < o2.y2 + birdRadius && birdX + birdRadius > o2.x1 && o2.x1 > -20) gameOver();
+    if (birdY + birdRadius > o3.y1 && birdX + birdRadius > o3.x1 && o3.x1 > -20) gameOver();
+    if (birdY + birdRadius > o4.y1 && birdX + birdRadius > o4.x1 && o4.x1 > -20) gameOver();
   };
 
   const keyDownHandler = (e) => {
